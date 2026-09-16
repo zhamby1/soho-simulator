@@ -14,3 +14,6 @@ Open `index.html` in any modern browser.
 6. GitHub will provide the public Pages address after deployment.
 
 No server, database, npm install, or build process is required.
+
+## A+ Troubleshooting Scenarios
+The simulator now includes APIPA/DHCP failure, DNS/name-resolution failure, and WAN/Internet connectivity troubleshooting tickets with instant student feedback.

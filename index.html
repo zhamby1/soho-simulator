@@ -27,7 +27,7 @@ h2{font-size:19px;border-bottom:1px solid #d6dbe0;padding-bottom:8px;margin:0 0 
 <div class="top"><div><div class="brand">HomeNet Router</div><div class="model">AC1200 Wireless Dual Band Router • Administration Utility</div></div><div class="score">Training Score: <span id="score">0</span>/100</div></div>
 <div class="layout">
 <nav class="side">
-<button class="nav active" data-page="status">Status</button><button class="nav" data-page="internet">Internet / WAN</button><button class="nav" data-page="lan">LAN Setup</button><button class="nav" data-page="wireless">Wireless</button><button class="nav" data-page="security">Wireless Security</button><button class="nav" data-page="clients">Connected Devices</button><button class="nav" data-page="diagnostics">Diagnostics</button>
+<button class="nav active" data-page="status">Status</button><button class="nav" data-page="internet">Internet / WAN</button><button class="nav" data-page="lan">LAN Setup</button><button class="nav" data-page="wireless">Wireless</button><button class="nav" data-page="security">Wireless Security</button><button class="nav" data-page="clients">Connected Devices</button><button class="nav" data-page="diagnostics">Diagnostics</button><button class="nav" data-page="aplus">A+ Troubleshooting</button>
 </nav>
 <main class="content">
 <section id="status" class="page active"><h2>Router Status</h2><div class="notice"><b>Training Scenario:</b> You installed a new router for a small office. Configure Internet, LAN/DHCP, and secure Wi-Fi, connect the office devices, then verify connectivity.</div>
@@ -52,6 +52,63 @@ h2{font-size:19px;border-bottom:1px solid #d6dbe0;padding-bottom:8px;margin:0 0 
 <section id="diagnostics" class="page"><h2>Diagnostics</h2><div class="box"><div class="boxhead">Network Utilities</div><div class="boxbody buttons"><button id="testDhcp" class="secondary">Renew DHCP</button><button id="pingGateway" class="secondary">Ping Gateway</button><button id="pingInternet" class="secondary">Ping 8.8.8.8</button><button id="testDns" class="secondary">DNS Lookup</button></div></div>
 <div class="box"><div class="boxhead">Diagnostic Output</div><div id="console" class="console">Router diagnostic utility ready.<br>Select a test above.</div></div>
 <div class="box"><div class="boxhead">Support Ticket #1042</div><div class="boxbody"><p><b>User report:</b> “My laptop says it is connected to Wi-Fi, but I cannot open websites.”</p><div class="row"><label>First settings to verify</label><select id="answer"><option value="">Select...</option><option value="monitor">Monitor resolution</option><option value="network">IP address, default gateway, and DNS</option><option value="keyboard">Keyboard connection</option><option value="printer">Printer toner</option></select></div><button id="submitAnswer" class="apply">Submit Diagnosis</button></div></div></section>
+
+<section id="aplus" class="page">
+<h2>CompTIA A+ Networking Troubleshooting Lab</h2>
+<p class="desc">Read each help-desk ticket, identify the most likely cause, and choose the best first corrective action. These scenarios reinforce common A+ networking concepts.</p>
+
+<div class="box">
+  <div class="boxhead">Scenario 1 — APIPA / No DHCP Lease</div>
+  <div class="boxbody">
+    <p><b>Ticket:</b> A Windows laptop connects to the office Wi-Fi but cannot access the Internet. <code>ipconfig</code> shows:</p>
+    <div class="console">IPv4 Address . . . . . : 169.254.34.18<br>Subnet Mask  . . . . . : 255.255.0.0<br>Default Gateway . . . : </div>
+    <div class="row"><label for="apipaAnswer">Most likely problem</label><select id="apipaAnswer">
+      <option value="">Select...</option>
+      <option value="dns">DNS server failure</option>
+      <option value="dhcp">The client could not obtain a DHCP lease</option>
+      <option value="monitor">Incorrect display driver</option>
+      <option value="port">HTTPS port is blocked</option>
+    </select></div>
+    <button id="checkApipa" class="apply" type="button">Check Answer</button>
+  </div>
+</div>
+
+<div class="box">
+  <div class="boxhead">Scenario 2 — IP Works, Websites Do Not</div>
+  <div class="boxbody">
+    <p><b>Ticket:</b> A workstation can successfully ping <code>8.8.8.8</code>, but <code>ping example.com</code> fails and websites do not load by name.</p>
+    <div class="row"><label for="dnsAnswer">Best item to investigate</label><select id="dnsAnswer">
+      <option value="">Select...</option>
+      <option value="gateway">Replace the default gateway</option>
+      <option value="dns">DNS configuration or DNS server availability</option>
+      <option value="dhcp">Disable all DHCP services</option>
+      <option value="cable">Replace the monitor cable</option>
+    </select></div>
+    <button id="checkDnsScenario" class="apply" type="button">Check Answer</button>
+  </div>
+</div>
+
+<div class="box">
+  <div class="boxhead">Scenario 3 — Local Network Works, Internet Does Not</div>
+  <div class="boxbody">
+    <p><b>Ticket:</b> Three PCs can communicate with each other and can ping <code>192.168.1.1</code>. None can reach an Internet IP address. The router status page shows <b>WAN: Disconnected</b>.</p>
+    <div class="row"><label for="wanAnswer">Best first action</label><select id="wanAnswer">
+      <option value="">Select...</option>
+      <option value="wan">Verify the modem/ONT connection to the router WAN port and WAN status</option>
+      <option value="ssid">Rename the Wi-Fi SSID</option>
+      <option value="printer">Reinstall the printer</option>
+      <option value="ram">Reseat workstation RAM</option>
+    </select></div>
+    <button id="checkWanScenario" class="apply" type="button">Check Answer</button>
+  </div>
+</div>
+
+<div class="box">
+  <div class="boxhead">Scenario Feedback</div>
+  <div id="aplusFeedback" class="console" aria-live="polite">Select a scenario answer to begin.</div>
+</div>
+</section>
+
 </main></div></div>
 <script>
 (()=>{const r=document.getElementById('router-admin'),$=s=>r.querySelector(s);let score=0,wan=false,lan=false,wifi=false,clients=false;const earned={};
@@ -69,6 +126,11 @@ $('#pingGateway').onclick=()=>msg(lan&&clients?'Pinging '+$('#lanIP').value+'...
 $('#pingInternet').onclick=()=>{if(wan&&lan&&clients){pts('tests',10);msg('Pinging 8.8.8.8...<br>Reply: time=18ms<br>Reply: time=17ms<br><b>Internet connectivity successful.</b>')}else msg('Request timed out.<br>Check WAN, LAN, and client configuration.')};
 $('#testDns').onclick=()=>{if(!wan||!lan||!clients)return msg('DNS lookup failed: network connectivity unavailable.');if($('#dns').value==='bad')msg('DNS lookup FAILED.<br>DNS server 192.168.99.99 is unreachable.');else{pts('dns',5);msg('DNS lookup successful.<br>example.com → 93.184.216.34')}};
 $('#submitAnswer').onclick=()=>{if($('#answer').value==='network'){pts('ticket',5);msg('CORRECT.<br>Verify IP address, subnet mask, default gateway, and DNS.<br><br><b>Training score: '+score+'/100</b>')}else msg('That is not the best first networking check. Try again.')};
+function aplusFeedback(text){$('#aplusFeedback').innerHTML=text}
+$('#checkApipa').onclick=()=>{if($('#apipaAnswer').value==='dhcp'){pts('apipa',5);aplusFeedback('<b>CORRECT — APIPA.</b><br>An address in 169.254.0.0/16 commonly indicates that the client did not receive an IPv4 address from DHCP. Check DHCP availability, wireless/LAN connectivity, then renew the lease.')}else aplusFeedback('<b>Not quite.</b><br>Notice the 169.254.x.x address and missing default gateway. Think about how Windows self-assigns an address when DHCP fails.')};
+$('#checkDnsScenario').onclick=()=>{if($('#dnsAnswer').value==='dns'){pts('aplusdns',5);aplusFeedback('<b>CORRECT — DNS.</b><br>Successful communication with 8.8.8.8 shows IP connectivity is working. Failure when using a hostname points toward name resolution, so verify the DNS server settings and availability.')}else aplusFeedback('<b>Try again.</b><br>The computer can already reach an Internet IP address. Focus on the service that translates hostnames into IP addresses.')};
+$('#checkWanScenario').onclick=()=>{if($('#wanAnswer').value==='wan'){pts('apluswan',5);aplusFeedback('<b>CORRECT — WAN connection.</b><br>The clients can reach the local gateway, so the LAN is functioning. A disconnected WAN status makes the modem/ONT-to-WAN connection and Internet-side configuration the logical next checks.')}else aplusFeedback('<b>Try again.</b><br>The local network and gateway are reachable. Focus on the point where the router connects the LAN to the ISP.')};
+
 })();
 </script>
 </body></html>
