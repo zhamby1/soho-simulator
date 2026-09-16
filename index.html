@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SOHO Router Administration Simulator</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#eef1f4;color:#1f2937;font:14px Arial,Helvetica,sans-serif}
+#router-admin{max-width:1180px;margin:24px auto;background:#eef1f4;border:1px solid #cbd5e1}
+.top{background:#263746;color:#fff;padding:15px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.brand{font-size:20px;font-weight:bold}.model{font-size:11px;color:#cbd5e1;margin-top:3px}.score{font-weight:bold;background:#fff;color:#263746;padding:7px 10px;border-radius:3px}
+.layout{display:grid;grid-template-columns:190px 1fr;min-height:620px}.side{background:#34495e;color:#fff;padding:10px 0}
+.nav{display:block;width:100%;text-align:left;padding:13px 17px;border:0;border-bottom:1px solid rgba(255,255,255,.08);background:transparent;color:#e5e7eb;cursor:pointer}
+.nav:hover,.nav.active{background:#1f6fa9;color:#fff}.content{padding:20px;background:#fff;min-width:0}.page{display:none}.page.active{display:block}
+h2{font-size:19px;border-bottom:1px solid #d6dbe0;padding-bottom:8px;margin:0 0 15px}.desc{color:#64748b;margin-bottom:18px}
+.box{border:1px solid #cbd5e1;margin-bottom:15px}.boxhead{background:#f1f3f5;border-bottom:1px solid #cbd5e1;padding:9px 12px;font-weight:bold}.boxbody{padding:13px}
+.row{display:grid;grid-template-columns:190px minmax(0,320px);align-items:center;gap:12px;margin:10px 0}.row input:not([type=checkbox]),.row select{width:100%;border:1px solid #9ca3af;padding:8px;background:#fff;font-size:14px}
+.apply,.secondary{padding:9px 16px;cursor:pointer;border-radius:2px}.apply{background:#2475ad;color:#fff;border:1px solid #175d8c;font-weight:bold}.secondary{background:#f8fafc;border:1px solid #94a3b8}
+.statusTable{width:100%;border-collapse:collapse}.statusTable td{border-bottom:1px solid #e2e8f0;padding:8px}.statusTable td:first-child{font-weight:bold;width:42%;background:#f8fafc}
+.good{color:#16803c;font-weight:bold}.bad{color:#b42318;font-weight:bold}.console{font:14px/1.6 Consolas,monospace;background:#111827;color:#d1fae5;padding:12px;min-height:130px}
+.notice{padding:10px;border:1px solid #f0c36d;background:#fff8df;margin-bottom:14px}.buttons{display:flex;flex-wrap:wrap;gap:8px}
+@media(max-width:650px){#router-admin{margin:0;border:0}.layout{grid-template-columns:1fr}.side{display:flex;overflow-x:auto;padding:0}.nav{min-width:135px;border-right:1px solid rgba(255,255,255,.1)}.content{padding:14px}.row{grid-template-columns:1fr;gap:4px}.top{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<div id="router-admin">
+<div class="top"><div><div class="brand">HomeNet Router</div><div class="model">AC1200 Wireless Dual Band Router • Administration Utility</div></div><div class="score">Training Score: <span id="score">0</span>/100</div></div>
+<div class="layout">
+<nav class="side">
+<button class="nav active" data-page="status">Status</button><button class="nav" data-page="internet">Internet / WAN</button><button class="nav" data-page="lan">LAN Setup</button><button class="nav" data-page="wireless">Wireless</button><button class="nav" data-page="security">Wireless Security</button><button class="nav" data-page="clients">Connected Devices</button><button class="nav" data-page="diagnostics">Diagnostics</button>
+</nav>
+<main class="content">
+<section id="status" class="page active"><h2>Router Status</h2><div class="notice"><b>Training Scenario:</b> You installed a new router for a small office. Configure Internet, LAN/DHCP, and secure Wi-Fi, connect the office devices, then verify connectivity.</div>
+<div class="box"><div class="boxhead">Internet Status</div><div class="boxbody"><table class="statusTable"><tr><td>Connection Status</td><td id="wanStatus" class="bad">Disconnected</td></tr><tr><td>Internet IP Address</td><td id="wanIP">0.0.0.0</td></tr><tr><td>Default Gateway</td><td id="wanGateway">0.0.0.0</td></tr><tr><td>DNS Server</td><td id="statusDns">0.0.0.0</td></tr></table></div></div>
+<div class="box"><div class="boxhead">Local Network</div><div class="boxbody"><table class="statusTable"><tr><td>Router IP Address</td><td id="statusLan">192.168.1.1</td></tr><tr><td>DHCP Server</td><td id="statusDhcp">Enabled</td></tr><tr><td>Wireless Network</td><td id="statusSsid">HomeNet</td></tr><tr><td>Wireless Security</td><td id="statusSecurity" class="bad">Open / Unsecured</td></tr></table></div></div></section>
+
+<section id="internet" class="page"><h2>Internet / WAN Setup</h2><p class="desc">Configure how the router obtains an address from the Internet service provider.</p><div class="box"><div class="boxhead">Internet Connection Type</div><div class="boxbody">
+<div class="row"><label>Connection Type</label><select id="wanType"><option>Automatic Configuration - DHCP</option><option>Static IP</option><option>PPPoE</option></select></div>
+<div class="row"><label>Router MAC Address</label><input value="84:16:F9:2A:10:7C" readonly></div>
+<div class="row"><span>Physical Connection</span><label><input id="wanCable" type="checkbox"> Modem/ONT cable connected to INTERNET/WAN port</label></div><button id="saveWan" class="apply">Save Settings</button></div></div></section>
+
+<section id="lan" class="page"><h2>LAN Setup</h2><p class="desc">Configure the private IPv4 network and DHCP pool.</p>
+<div class="box"><div class="boxhead">LAN TCP/IP Setup</div><div class="boxbody"><div class="row"><label>IP Address</label><input id="lanIP" value="192.168.1.1"></div><div class="row"><label>Subnet Mask</label><input id="mask" value="255.255.255.0"></div></div></div>
+<div class="box"><div class="boxhead">DHCP Server</div><div class="boxbody"><div class="row"><label>Use Router as DHCP Server</label><input id="dhcpEnabled" type="checkbox" checked></div><div class="row"><label>Starting IP</label><input id="start" value="192.168.1.100"></div><div class="row"><label>Ending IP</label><input id="end" value="192.168.1.150"></div><div class="row"><label>DNS Server</label><select id="dns"><option value="auto">Get automatically from ISP</option><option value="public">Public DNS Server</option><option value="bad">192.168.99.99</option></select></div><button id="saveLan" class="apply">Apply</button></div></div></section>
+
+<section id="wireless" class="page"><h2>Wireless Settings</h2><div class="box"><div class="boxhead">2.4 GHz Wireless Network</div><div class="boxbody"><div class="row"><label>Network Name (SSID)</label><input id="ssid" value="HomeNet"></div><div class="row"><label>SSID Broadcast</label><select><option>Enabled</option><option>Disabled</option></select></div><div class="row"><label>Channel</label><select><option>Auto</option><option>1</option><option>6</option><option>11</option></select></div><button id="saveWifi" class="apply">Apply</button></div></div></section>
+
+<section id="security" class="page"><h2>Wireless Security</h2><div class="box"><div class="boxhead">Security Options</div><div class="boxbody"><div class="row"><label>Security Mode</label><select id="securityMode"><option value="open">None / Open</option><option value="wep">WEP</option><option value="wpa2">WPA2-Personal</option><option value="wpa3">WPA3-Personal</option></select></div><div class="row"><label>Network Key</label><input id="wifiPassword" type="password" value="OfficeNetwork2026!"></div><button id="saveSecurity" class="apply">Save Settings</button></div></div></section>
+
+<section id="clients" class="page"><h2>Connected Devices</h2><div class="box"><div class="boxhead">DHCP Client List</div><div class="boxbody"><table class="statusTable"><tr><td>LAPTOP-01</td><td id="client1">Not Connected</td></tr><tr><td>OFFICE-PRINTER</td><td id="client2">Not Connected</td></tr><tr><td>EMPLOYEE-PHONE</td><td id="client3">Not Connected</td></tr></table><br><button id="connectClients" class="secondary">Connect Office Devices</button></div></div></section>
+
+<section id="diagnostics" class="page"><h2>Diagnostics</h2><div class="box"><div class="boxhead">Network Utilities</div><div class="boxbody buttons"><button id="testDhcp" class="secondary">Renew DHCP</button><button id="pingGateway" class="secondary">Ping Gateway</button><button id="pingInternet" class="secondary">Ping 8.8.8.8</button><button id="testDns" class="secondary">DNS Lookup</button></div></div>
+<div class="box"><div class="boxhead">Diagnostic Output</div><div id="console" class="console">Router diagnostic utility ready.<br>Select a test above.</div></div>
+<div class="box"><div class="boxhead">Support Ticket #1042</div><div class="boxbody"><p><b>User report:</b> “My laptop says it is connected to Wi-Fi, but I cannot open websites.”</p><div class="row"><label>First settings to verify</label><select id="answer"><option value="">Select...</option><option value="monitor">Monitor resolution</option><option value="network">IP address, default gateway, and DNS</option><option value="keyboard">Keyboard connection</option><option value="printer">Printer toner</option></select></div><button id="submitAnswer" class="apply">Submit Diagnosis</button></div></div></section>
+</main></div></div>
+<script>
+(()=>{const r=document.getElementById('router-admin'),$=s=>r.querySelector(s);let score=0,wan=false,lan=false,wifi=false,clients=false;const earned={};
+function pts(k,n){if(!earned[k]){earned[k]=1;score=Math.min(100,score+n);$('#score').textContent=score}}
+function msg(t){$('#console').innerHTML=t}function ip(v){let p=v.trim().split('.');return p.length===4&&p.every(x=>/^\\d+$/.test(x)&&+x<256)}
+function subnet(a,b){return a.split('.').slice(0,3).join('.')===b.split('.').slice(0,3).join('.')}
+r.querySelectorAll('.nav').forEach(b=>b.onclick=()=>{r.querySelectorAll('.nav,.page').forEach(x=>x.classList.remove('active'));b.classList.add('active');$('#'+b.dataset.page).classList.add('active')});
+$('#saveWan').onclick=()=>{if(!$('#wanCable').checked){alert('Connection failed. Connect the modem/ONT to the WAN port.');return}wan=true;pts('wan',20);$('#wanStatus').textContent='Connected';$('#wanStatus').className='good';$('#wanIP').textContent='73.42.118.26';$('#wanGateway').textContent='73.42.118.1';$('#statusDns').textContent='Automatic';alert('WAN address obtained successfully.')};
+$('#saveLan').onclick=()=>{let a=$('#lanIP').value,s=$('#start').value,e=$('#end').value;if(!ip(a)||!ip(s)||!ip(e)||!subnet(a,s)||!subnet(a,e)){alert('Invalid LAN/DHCP configuration.');return}lan=$('#dhcpEnabled').checked;pts('lan',20);$('#statusLan').textContent=a;$('#statusDhcp').textContent=lan?'Enabled':'Disabled';alert('LAN settings applied.')};
+$('#saveWifi').onclick=()=>{if(!$('#ssid').value.trim()){alert('SSID cannot be blank.');return}wifi=true;pts('wifi',10);$('#statusSsid').textContent=$('#ssid').value.trim();alert('Wireless settings applied.')};
+$('#saveSecurity').onclick=()=>{let m=$('#securityMode').value,p=$('#wifiPassword').value;if((m==='wpa2'||m==='wpa3')&&p.length>=8){pts('security',20);$('#statusSecurity').textContent=m==='wpa3'?'WPA3-Personal':'WPA2-Personal';$('#statusSecurity').className='good';alert('Wireless security saved.')}else{alert('Choose WPA2/WPA3 with a password of at least 8 characters.')}};
+$('#connectClients').onclick=()=>{if(!lan||!wifi){alert('Configure LAN/DHCP and wireless first.');return}clients=true;pts('clients',10);let b=$('#start').value.split('.').slice(0,3).join('.');$('#client1').textContent=b+'.100';$('#client2').textContent=b+'.101';$('#client3').textContent=b+'.102'};
+$('#testDhcp').onclick=()=>msg(lan&&clients?'DHCP REQUEST... OK<br>IP: '+$('#client1').textContent+'<br>Mask: '+$('#mask').value+'<br>Gateway: '+$('#lanIP').value:'DHCP REQUEST... FAILED<br>Check LAN/DHCP settings.');
+$('#pingGateway').onclick=()=>msg(lan&&clients?'Pinging '+$('#lanIP').value+'...<br>Reply: time&lt;1ms<br><b>Local gateway reachable.</b>':'PING FAILED<br>Check client addressing.');
+$('#pingInternet').onclick=()=>{if(wan&&lan&&clients){pts('tests',10);msg('Pinging 8.8.8.8...<br>Reply: time=18ms<br>Reply: time=17ms<br><b>Internet connectivity successful.</b>')}else msg('Request timed out.<br>Check WAN, LAN, and client configuration.')};
+$('#testDns').onclick=()=>{if(!wan||!lan||!clients)return msg('DNS lookup failed: network connectivity unavailable.');if($('#dns').value==='bad')msg('DNS lookup FAILED.<br>DNS server 192.168.99.99 is unreachable.');else{pts('dns',5);msg('DNS lookup successful.<br>example.com → 93.184.216.34')}};
+$('#submitAnswer').onclick=()=>{if($('#answer').value==='network'){pts('ticket',5);msg('CORRECT.<br>Verify IP address, subnet mask, default gateway, and DNS.<br><br><b>Training score: '+score+'/100</b>')}else msg('That is not the best first networking check. Try again.')};
+})();
+</script>
+</body></html>
